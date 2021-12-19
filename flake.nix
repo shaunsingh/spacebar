@@ -1,15 +1,13 @@
 {
   description = "A minimal status bar for macOS";
 
-  # TODO: Move to official nixpkgs once PR is merged
-  #       https://github.com/NixOS/nixpkgs/pull/117780
-  inputs.nixpkgs.url = "github:cmacrae/nixpkgs/fix_spacebar";
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/master";
 
   outputs = { self, nixpkgs }:
     let
       pkgs = import nixpkgs {
         config = {};
-        system = "x86_64-darwin";
+        system = "aarch64-darwin";
       };
 
       buildInputs = with pkgs.darwin.apple_sdk.frameworks; [
@@ -22,10 +20,10 @@
       shellInputs = buildInputs ++ [ pkgs.asciidoctor ];
     in
       {
-        packages.x86_64-darwin.spacebar =
+        packages.aarch64-darwin.spacebar =
           pkgs.stdenv.mkDerivation rec {
             pname = "spacebar";
-            version = "1.3.0";
+            version = "1.4.0";
             src = self;
 
             inherit buildInputs;
@@ -47,12 +45,12 @@
           };
 
         overlay = final: prev: {
-          spacebar = self.packages.x86_64-darwin.spacebar;
+          spacebar = self.packages.aarch64-darwin.spacebar;
         };
 
-        defaultPackage.x86_64-darwin = self.packages.x86_64-darwin.spacebar;
+        defaultPackage.aarch64-darwin = self.packages.aarch64-darwin.spacebar;
 
-        devShell.x86_64-darwin = pkgs.stdenv.mkDerivation {
+        devShell.aarch64-darwin = pkgs.stdenv.mkDerivation {
           name = "spacebar";
           buildInputs = shellInputs;
         };
